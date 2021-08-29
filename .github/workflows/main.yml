@@ -265,9 +265,9 @@ jobs:
 
         - uses: actions/download-artifact@v2
         
-        - uses: geekyeggo/delete-artifact@v1
-          with:
-              name: component_importance_data
+#         - uses: geekyeggo/delete-artifact@v1
+#           with:
+#               name: component_importance_data
 
         - name: javadiff_install
           run: python ./javadiff/setup.py install
@@ -370,9 +370,9 @@ jobs:
 
         - uses: actions/download-artifact@v2
         
-        - uses: geekyeggo/delete-artifact@v1
-          with:
-              name: component_importance_data
+#         - uses: geekyeggo/delete-artifact@v1
+#           with:
+#               name: component_importance_data
 
         - name: javadiff_install
           run: python ./javadiff/setup.py install
