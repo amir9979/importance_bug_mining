@@ -106,7 +106,7 @@ jobs:
 #       run: cmd /c "dir /b /s"
 
     - name: execute
-      run: python D4JMining.py ${{matrix.bug_ind}} commons-lang base
+      run: python D4JMining.py ${{matrix.bug_ind}} base commons-lang
 
 #     - name: dir component_importance_data
 #       if: ${{ always() }}
@@ -273,7 +273,7 @@ jobs:
           run: python ./javadiff/setup.py install
 
         - name: execute
-          run: python D4JMining.py ${{matrix.bug_ind}}  commons-lang base training_set
+          run: python D4JMining.py ${{matrix.bug_ind}}  base commons-lang training_set
 
         - name: Upload component_importance_data
           if: ${{ always() }}
