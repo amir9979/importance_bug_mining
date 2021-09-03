@@ -106,7 +106,7 @@ jobs:
       run: python D4JMining.py ${{matrix.bug_ind}} base commons-lang
 
     - name: delete clones
-      run:  rmdir component_importance_data/clones /s /q
+      run:  rm component_importance_data/clones -r -f
       
     - name: Upload component_importance_data
       if: ${{ always() }}
@@ -216,7 +216,7 @@ jobs:
           run: python D4JMining.py ${{matrix.bug_ind}}  base commons-lang training_set
 
         - name: delete clones
-          run:  rmdir component_importance_data/clones /s /q
+          run:  rm component_importance_data/clones -r -f
       
         - name: Upload component_importance_data
           if: ${{ always() }}
