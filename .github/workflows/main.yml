@@ -125,6 +125,7 @@ jobs:
 
 
       continue-on-error: true
+      if: always()
       needs: extract_all
   
       steps:
@@ -233,6 +234,7 @@ jobs:
       runs-on: windows-latest
 
       continue-on-error: true
+      if: always()
       needs: training_set
   
       steps:
