@@ -210,8 +210,8 @@ jobs:
         - name: get training set
           run: python D4JMining.py base commons-lang
 
-        - name: execute experiment
-          run: python experiment.py
+#         - name: execute experiment
+#           run: python experiment.py
 
         - name: delete clones
           run:  rm component_importance_data/clones -r -Force
