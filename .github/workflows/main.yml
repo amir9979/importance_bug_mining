@@ -12,7 +12,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  extract_all:
+  do_all:
     # The type of runner that the job will run on
     runs-on: windows-latest
     strategy:
@@ -103,7 +103,7 @@ jobs:
       run: python ./javadiff/setup.py install
 
     - name: execute
-      run: python D4JMining.py base commons-lang ${{matrix.bug_ind}}
+      run: python D4JMining.py -p commons-lang -i ${{matrix.bug_ind}} -f do_all
 
     - name: delete clones
       run:  rm component_importance_data/clones -r -Force
@@ -120,7 +120,7 @@ jobs:
       runs-on: windows-latest
       continue-on-error: true
       if: always()
-      needs: extract_all
+      needs: do_all
   
       steps:
       
@@ -208,7 +208,7 @@ jobs:
           run: python ./javadiff/setup.py install
 
         - name: get training set
-          run: python D4JMining.py base commons-lang
+          run: python D4JMining.py -p commons-lang -f training_set
 
 #         - name: execute experiment
 #           run: python experiment.py
@@ -223,3 +223,229 @@ jobs:
             name: component_importance_data
             path: component_importance_data
     
+  experiment:
+    # The type of runner that the job will run on
+    runs-on: windows-latest
+    continue-on-error: true
+    if: always()
+    needs: training_set
+
+    strategy:
+      fail-fast: false
+      matrix:
+        bug_ind: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]#, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64]
+
+            
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+
+    - name: longpaths
+      run: git config --system core.longpaths true
+    
+    - name: Checkout component_importance
+      uses: actions/checkout@v2
+      with:
+        repository: amir9979/component_importance
+        path: .
+        fetch-depth: 0
+    
+    - name: Checkout javadiff
+      uses: actions/checkout@v2
+      with:
+        repository: amir9979/javadiff
+        path: ./javadiff
+        fetch-depth: 0
+
+    - name: Checkout sfl
+      uses: actions/checkout@v2
+      with:
+        repository: amir9979/sfl
+        path: ./sfl
+        fetch-depth: 0
+
+    - name: Checkout mvnpy
+      uses: actions/checkout@v2
+      with:
+        repository: rotba/mvnpy
+        path: ./mvnpy
+        fetch-depth: 0
+        ref: miner_merge
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest 
+        pip install gitpython
+        pip install jira
+        pip install termcolor 
+        pip install openpyxl  
+        pip install javalang
+        pip install pathlib
+        pip install junitparser
+        pip install numpy
+        pip install sklearn
+        pip install pandas
+        pip install pyswarm
+        pip install networkx
+        pip install lizard
+        pip install pytest 
+        pip install gitpython
+        pip install jira
+        pip install termcolor 
+        pip install openpyxl  
+        pip install javalang
+        pip install pathlib
+        pip install junitparser
+        pip install pandas
+        pip install numpy
+        pip install pydriller
+        pip install dataclasses
+        pip install jsons
+
+
+    - name: javadiff_install
+      run: python ./javadiff/setup.py install
+
+    - uses: actions/download-artifact@v2
+
+#         - uses: geekyeggo/delete-artifact@v1
+#           with:
+#               name: component_importance_data
+
+    - name: javadiff_install
+      run: python ./javadiff/setup.py install
+
+    - name: experiment
+      run: python D4JMining.py -p commons-lang -i ${{matrix.bug_ind}} -f experiment
+
+#         - name: execute experiment
+#           run: python experiment.py
+
+    - name: delete clones
+      run:  rm component_importance_data/clones -r -Force
+
+    - name: Upload component_importance_data
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: component_importance_data
+        path: component_importance_data
+
+aggragate:
+  # The type of runner that the job will run on
+  runs-on: windows-latest
+  continue-on-error: true
+  if: always()
+  needs: experiment
+
+  steps:
+
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+
+    - name: longpaths
+      run: git config --system core.longpaths true
+
+    - name: Checkout component_importance
+      uses: actions/checkout@v2
+      with:
+        repository: amir9979/component_importance
+        path: .
+        fetch-depth: 0
+
+    - name: Checkout javadiff
+      uses: actions/checkout@v2
+      with:
+        repository: amir9979/javadiff
+        path: ./javadiff
+        fetch-depth: 0
+
+    - name: Checkout sfl
+      uses: actions/checkout@v2
+      with:
+        repository: amir9979/sfl
+        path: ./sfl
+        fetch-depth: 0
+
+    - name: Checkout mvnpy
+      uses: actions/checkout@v2
+      with:
+        repository: rotba/mvnpy
+        path: ./mvnpy
+        fetch-depth: 0
+        ref: miner_merge
+
+    - name: Install dependencies
+      run: |
+            python -m pip install --upgrade pip
+            pip install pytest 
+            pip install gitpython
+            pip install jira
+            pip install termcolor 
+            pip install openpyxl  
+            pip install javalang
+            pip install pathlib
+            pip install junitparser
+            pip install numpy
+            pip install sklearn
+            pip install pandas
+            pip install pyswarm
+            pip install networkx
+            pip install lizard
+            pip install pytest 
+            pip install gitpython
+            pip install jira
+            pip install termcolor 
+            pip install openpyxl  
+            pip install javalang
+            pip install pathlib
+            pip install junitparser
+            pip install pandas
+            pip install numpy
+            pip install pydriller
+            pip install dataclasses
+            pip install jsons
+
+    - uses: actions/download-artifact@v2
+
+#         - uses: geekyeggo/delete-artifact@v1
+#           with:
+#               name: component_importance_data
+
+    - name: javadiff_install
+      run: python ./javadiff/setup.py install
+
+    - name: get training set
+      run: python D4JMining.py -p commons-lang -f aggragate
+
+#         - name: execute experiment
+#           run: python experiment.py
+
+    - name: delete clones
+      run:  rm component_importance_data/clones -r -Force
+
+    - name: Upload component_importance_data
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: component_importance_data
+        path: component_importance_data
