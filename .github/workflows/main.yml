@@ -319,19 +319,12 @@ jobs:
 
     - uses: actions/download-artifact@v2
 
-#         - uses: geekyeggo/delete-artifact@v1
-#           with:
-#               name: component_importance_data
-
     - name: javadiff_install
       run: python ./javadiff/setup.py install
 
     - name: experiment
       run: python D4JMining.py -p commons-lang -i ${{matrix.bug_ind}} -f experiment
 
-#         - name: execute experiment
-#           run: python experiment.py
-
     - name: delete clones
       run:  rm component_importance_data/clones -r -Force
 
@@ -342,110 +335,103 @@ jobs:
         name: component_importance_data
         path: component_importance_data
 
-aggragate:
-  # The type of runner that the job will run on
-  runs-on: windows-latest
-  continue-on-error: true
-  if: always()
-  needs: experiment
+  aggragate:
+      # The type of runner that the job will run on
+      runs-on: windows-latest
+      continue-on-error: true
+      if: always()
+      needs: experiment
 
-  steps:
+      steps:
 
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.8
+        - uses: actions/checkout@v2
+        - name: Set up Python
+          uses: actions/setup-python@v2
+          with:
+            python-version: 3.8
 
-    - name: Set up JDK 1.8
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.8
+        - name: Set up JDK 1.8
+          uses: actions/setup-java@v1
+          with:
+            java-version: 1.8
 
-    - name: longpaths
-      run: git config --system core.longpaths true
+        - name: longpaths
+          run: git config --system core.longpaths true
 
-    - name: Checkout component_importance
-      uses: actions/checkout@v2
-      with:
-        repository: amir9979/component_importance
-        path: .
-        fetch-depth: 0
+        - name: Checkout component_importance
+          uses: actions/checkout@v2
+          with:
+            repository: amir9979/component_importance
+            path: .
+            fetch-depth: 0
 
-    - name: Checkout javadiff
-      uses: actions/checkout@v2
-      with:
-        repository: amir9979/javadiff
-        path: ./javadiff
-        fetch-depth: 0
+        - name: Checkout javadiff
+          uses: actions/checkout@v2
+          with:
+            repository: amir9979/javadiff
+            path: ./javadiff
+            fetch-depth: 0
 
-    - name: Checkout sfl
-      uses: actions/checkout@v2
-      with:
-        repository: amir9979/sfl
-        path: ./sfl
-        fetch-depth: 0
+        - name: Checkout sfl
+          uses: actions/checkout@v2
+          with:
+            repository: amir9979/sfl
+            path: ./sfl
+            fetch-depth: 0
 
-    - name: Checkout mvnpy
-      uses: actions/checkout@v2
-      with:
-        repository: rotba/mvnpy
-        path: ./mvnpy
-        fetch-depth: 0
-        ref: miner_merge
+        - name: Checkout mvnpy
+          uses: actions/checkout@v2
+          with:
+            repository: rotba/mvnpy
+            path: ./mvnpy
+            fetch-depth: 0
+            ref: miner_merge
 
-    - name: Install dependencies
-      run: |
-            python -m pip install --upgrade pip
-            pip install pytest 
-            pip install gitpython
-            pip install jira
-            pip install termcolor 
-            pip install openpyxl  
-            pip install javalang
-            pip install pathlib
-            pip install junitparser
-            pip install numpy
-            pip install sklearn
-            pip install pandas
-            pip install pyswarm
-            pip install networkx
-            pip install lizard
-            pip install pytest 
-            pip install gitpython
-            pip install jira
-            pip install termcolor 
-            pip install openpyxl  
-            pip install javalang
-            pip install pathlib
-            pip install junitparser
-            pip install pandas
-            pip install numpy
-            pip install pydriller
-            pip install dataclasses
-            pip install jsons
+        - name: Install dependencies
+          run: |
+                python -m pip install --upgrade pip
+                pip install pytest 
+                pip install gitpython
+                pip install jira
+                pip install termcolor 
+                pip install openpyxl  
+                pip install javalang
+                pip install pathlib
+                pip install junitparser
+                pip install numpy
+                pip install sklearn
+                pip install pandas
+                pip install pyswarm
+                pip install networkx
+                pip install lizard
+                pip install pytest 
+                pip install gitpython
+                pip install jira
+                pip install termcolor 
+                pip install openpyxl  
+                pip install javalang
+                pip install pathlib
+                pip install junitparser
+                pip install pandas
+                pip install numpy
+                pip install pydriller
+                pip install dataclasses
+                pip install jsons
 
-    - uses: actions/download-artifact@v2
+        - uses: actions/download-artifact@v2
 
-#         - uses: geekyeggo/delete-artifact@v1
-#           with:
-#               name: component_importance_data
+        - name: javadiff_install
+          run: python ./javadiff/setup.py install
 
-    - name: javadiff_install
-      run: python ./javadiff/setup.py install
+        - name: get training set
+          run: python D4JMining.py -p commons-lang -f aggragate
 
-    - name: get training set
-      run: python D4JMining.py -p commons-lang -f aggragate
+        - name: delete clones
+          run:  rm component_importance_data/clones -r -Force
 
-#         - name: execute experiment
-#           run: python experiment.py
-
-    - name: delete clones
-      run:  rm component_importance_data/clones -r -Force
-
-    - name: Upload component_importance_data
-      if: ${{ always() }}
-      uses: actions/upload-artifact@v2
-      with:
-        name: component_importance_data
-        path: component_importance_data
+        - name: Upload component_importance_data
+          if: ${{ always() }}
+          uses: actions/upload-artifact@v2
+          with:
+            name: component_importance_data
+            path: component_importance_data
