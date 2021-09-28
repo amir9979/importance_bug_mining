@@ -113,6 +113,7 @@ jobs:
         rm component_importance_data/files_functions -r -Force
         rm component_importance_data/execution_graphs -r -Force
         rm component_importance_data/call_graphs -r -Force
+        rm component_importance_data/files_packages -r -Force
       
     - name: Upload component_importance_data
       if: ${{ always() }}
@@ -227,7 +228,8 @@ jobs:
             rm component_importance_data/files_functions -r -Force
             rm component_importance_data/execution_graphs -r -Force
             rm component_importance_data/call_graphs -r -Force
-      
+            rm component_importance_data/files_packages -r -Force
+
       
         - name: Upload component_importance_data
           if: ${{ always() }}
