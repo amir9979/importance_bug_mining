@@ -207,18 +207,15 @@ jobs:
 
         - uses: actions/download-artifact@v2
         
-#         - uses: geekyeggo/delete-artifact@v1
-#           with:
-#               name: component_importance_data
+        - uses: geekyeggo/delete-artifact@v1
+          with:
+              name: component_importance_data
 
         - name: javadiff_install
           run: python ./javadiff/setup.py install
 
         - name: get training set
           run: python D4JMining.py -p commons-lang -f training_set
-
-#         - name: execute experiment
-#           run: python experiment.py
 
         - name: delete clones
           run:  |
@@ -230,13 +227,15 @@ jobs:
             rm component_importance_data/call_graphs -r -Force
             rm component_importance_data/files_packages -r -Force
 
-      
-        - name: Upload component_importance_data
+        - name: zip data
+          run: python -c "import shutil;shutil.make_archive('zipped', 'zip', 'component_importance_data')"
+          
+        - name: Upload zip data
           if: ${{ always() }}
           uses: actions/upload-artifact@v2
           with:
-            name: component_importance_data
-            path: component_importance_data
+            name: zipped
+            path: zipped.zip
     
   experiment:
     # The type of runner that the job will run on
@@ -333,6 +332,9 @@ jobs:
       run: python ./javadiff/setup.py install
 
     - uses: actions/download-artifact@v2
+
+    - name: unzip data
+      run: python -c "import shutil;shutil.make_archive('zipped.zip', 'component_importance_data', 'zip')"
 
     - name: javadiff_install
       run: python ./javadiff/setup.py install
