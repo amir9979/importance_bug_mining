@@ -340,7 +340,7 @@ jobs:
       run: ls -R
 
     - name: unzip data
-      run: python -c "import shutil;shutil.unpack_archive('zipped.zip', 'component_importance_data', 'zip')"
+      run: python -c "import shutil;shutil.unpack_archive('zipped', 'component_importance_data', 'zip')"
 
     - name: javadiff_install
       run: python ./javadiff/setup.py install
