@@ -456,6 +456,16 @@ jobs:
         - name: get training set
           run: python D4JMining.py -p commons-lang -f aggragate -d component_importance_data_experiments
 
+        
+        - uses: geekyeggo/delete-artifact@v1
+          with:
+              name: component_importance_data_experiments
+
+        
+        - uses: geekyeggo/delete-artifact@v1
+          with:
+              name: zipped
+
 
         - name: Upload component_importance_data
           if: ${{ always() }}
