@@ -450,6 +450,7 @@ jobs:
                 pip install jsons
 
         - uses: actions/download-artifact@v2
+          name: component_importance_data_experiments
 
         - name: javadiff_install
           run: python ./javadiff/setup.py install
