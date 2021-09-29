@@ -362,7 +362,7 @@ jobs:
       if: ${{ always() }}
       uses: actions/upload-artifact@v2
       with:
-        name: component_importance_data
+        name: component_importance_data_experiments
         path: component_importance_data
 
   aggragate:
