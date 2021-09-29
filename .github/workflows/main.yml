@@ -454,7 +454,7 @@ jobs:
           run: python ./javadiff/setup.py install
 
         - name: get training set
-          run: python D4JMining.py -p commons-lang -f aggragate
+          run: python D4JMining.py -p commons-lang -f aggragate -d component_importance_data_experiments
 
         - name: delete clones
           run:  rm component_importance_data/clones -r -Force
@@ -463,5 +463,5 @@ jobs:
           if: ${{ always() }}
           uses: actions/upload-artifact@v2
           with:
-            name: component_importance_data
-            path: component_importance_data
+            name: component_importance_data_all
+            path: component_importance_data_experiments
