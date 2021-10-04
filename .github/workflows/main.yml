@@ -470,9 +470,12 @@ jobs:
               name: zipped
 
 
+        - name: zip data
+          run: python -c "import shutil;shutil.make_archive('all_data', 'zip', 'component_importance_data_experiments')"
+          
         - name: Upload component_importance_data
           if: ${{ always() }}
           uses: actions/upload-artifact@v2
           with:
-            name: component_importance_data_all
-            path: component_importance_data_experiments
+            name: all_data
+            path: all_data.zip
